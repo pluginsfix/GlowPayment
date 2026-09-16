@@ -1,0 +1,15 @@
+config-version: 1
+
+transfer:
+  tax-enabled: true
+  tax-percent: 5.0
+  min-amount: 1.0
+  max-amount: 1000000.0
+
+pvp:
+  enabled: true
+  loss-percent: 5.0
+  transfer-to-killer: true
+  min-balance-threshold: 1.0
+  disabled-worlds:
+    - example_disabled_world

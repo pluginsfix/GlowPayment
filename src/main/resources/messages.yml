@@ -1,0 +1,24 @@
+prefix: "<gradient:#FFAA00:#FF5500>[GlowPayment]</gradient> <gray>"
+
+command:
+  no-permission: "<red>У вас нет прав для выполнения этой команды.</red>"
+  player-only: "<red>Эта команда доступна только игрокам.</red>"
+  pay-usage: "<yellow>Использование: <gold>/pay <игрок> <сумма></gold></yellow>"
+  admin-usage: "<yellow>Использование: <gold>/glowpayment reload</gold></yellow>"
+  reloaded: "<green>Конфигурация и сообщения успешно перезагружены!</green>"
+
+pay:
+  self-transfer: "<red>Вы не можете переводить деньги самому себе.</red>"
+  player-not-found: "<red>Игрок <gold><target></gold> не найден или не в сети.</red>"
+  invalid-amount: "<red>Укажите корректную сумму для перевода.</red>"
+  min-amount: "<red>Минимальная сумма перевода составляет <gold><min>$</gold>.</red>"
+  max-amount: "<red>Максимальная сумма перевода составляет <gold><max>$</gold>.</red>"
+  insufficient-funds: "<red>Недостаточно средств. Ваш баланс: <gold><balance>$</gold>.</red>"
+  sent-with-tax: "<green>Вы отправили <gold><gross>$</gold> игроку <gold><target></gold>. Комиссия (<yellow><percent>%</yellow>): <red><tax>$</red>. Получателю зачислено: <gold><net>$</gold>.</green>"
+  sent-no-tax: "<green>Вы отправили <gold><gross>$</gold> игроку <gold><target></gold>.</green>"
+  received: "<green>Вы получили <gold><net>$</gold> от игрока <gold><sender></gold>.</green>"
+
+pvp:
+  victim-lost: "<red>Вы погибли в PvP с <gold><killer></gold> и потеряли <gold><lost>$</gold> (<yellow><percent>%</yellow> баланса).</red>"
+  killer-reward: "<green>Вы одолели <gold><victim></gold> и получили <gold><reward>$</gold> (<yellow><percent>%</yellow> его баланса).</green>"
+  killer-burned: "<gray>Вы одолели <gold><victim></gold>. С его счёта изъято <gold><lost>$</gold>.</gray>"

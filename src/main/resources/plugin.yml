@@ -1,0 +1,27 @@
+name: GlowPayment
+version: '${project.version}'
+main: pluginsfix.glowpayment.GlowPayment
+api-version: '1.20'
+author: pluginsfix
+depend:
+  - Vault
+commands:
+  pay:
+    description: Transfer money to another player
+    aliases:
+      - transfer
+    permission: glowpayment.use
+  glowpayment:
+    description: Administration command for GlowPayment
+    aliases:
+      - gp
+    permission: glowpayment.admin
+permissions:
+  glowpayment.use:
+    default: true
+  glowpayment.admin:
+    default: op
+  glowpayment.bypass.tax:
+    default: op
+  glowpayment.bypass.pvploss:
+    default: op
