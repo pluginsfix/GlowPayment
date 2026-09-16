@@ -14,12 +14,12 @@ import java.util.Locale;
 
 public final class PaymentService {
 
-    private final VaultEconomyHook economyHook;
+    private final EconomyProvider economy;
     private final Messages messages;
     private volatile PaymentConfig config;
 
-    public PaymentService(VaultEconomyHook economyHook, Messages messages, PaymentConfig config) {
-        this.economyHook = economyHook;
+    public PaymentService(EconomyProvider economy, Messages messages, PaymentConfig config) {
+        this.economy = economy;
         this.messages = messages;
         this.config = config;
     }
@@ -33,7 +33,7 @@ public final class PaymentService {
     }
 
     public boolean isEconomyAvailable() {
-        return economyHook.isAvailable();
+        return economy.isAvailable();
     }
 
     public boolean executeTransfer(Player sender, Player target, BigDecimal rawAmount) {
@@ -41,7 +41,7 @@ public final class PaymentService {
             return false;
         }
 
-        if (!economyHook.isAvailable()) {
+        if (!economy.isAvailable()) {
             messages.send(sender, "economy.not-found");
             return false;
         }
@@ -68,7 +68,7 @@ public final class PaymentService {
             return false;
         }
 
-        BigDecimal senderBalance = economyHook.getBalance(sender);
+        BigDecimal senderBalance = economy.getBalance(sender);
         if (senderBalance.compareTo(grossAmount) < 0) {
             messages.send(sender, "pay.insufficient-funds", Placeholder.parsed("balance", format(senderBalance)));
             return false;
@@ -79,16 +79,16 @@ public final class PaymentService {
 
         TransferCalculation calc = PaymentCalculator.calculateTransfer(grossAmount, config.taxPercent(), applyTax);
 
-        boolean withdrawn = economyHook.withdraw(sender, calc.grossAmount());
+        boolean withdrawn = economy.withdraw(sender, calc.grossAmount());
         if (!withdrawn) {
-            BigDecimal currentBalance = economyHook.getBalance(sender);
+            BigDecimal currentBalance = economy.getBalance(sender);
             messages.send(sender, "pay.insufficient-funds", Placeholder.parsed("balance", format(currentBalance)));
             return false;
         }
 
-        boolean deposited = economyHook.deposit(target, calc.netAmount());
+        boolean deposited = economy.deposit(target, calc.netAmount());
         if (!deposited) {
-            economyHook.deposit(sender, calc.grossAmount());
+            economy.deposit(sender, calc.grossAmount());
             messages.send(sender, "pay.invalid-amount");
             return false;
         }
@@ -124,7 +124,7 @@ public final class PaymentService {
     }
 
     public void processPvPDeath(Player victim, Player killer) {
-        if (!config.pvpEnabled() || victim == null || killer == null || !economyHook.isAvailable()) {
+        if (!config.pvpEnabled() || victim == null || killer == null || !economy.isAvailable()) {
             return;
         }
 
@@ -141,7 +141,7 @@ public final class PaymentService {
             return;
         }
 
-        BigDecimal balance = economyHook.getBalance(victim);
+        BigDecimal balance = economy.getBalance(victim);
         if (balance.compareTo(config.pvpMinBalanceThreshold()) < 0) {
             return;
         }
@@ -151,13 +151,13 @@ public final class PaymentService {
             return;
         }
 
-        boolean withdrawn = economyHook.withdraw(victim, loss.lossAmount());
+        boolean withdrawn = economy.withdraw(victim, loss.lossAmount());
         if (!withdrawn) {
             return;
         }
 
         if (config.pvpTransferToKiller()) {
-            economyHook.deposit(killer, loss.lossAmount());
+            economy.deposit(killer, loss.lossAmount());
             messages.send(
                 killer,
                 "pvp.killer-reward",

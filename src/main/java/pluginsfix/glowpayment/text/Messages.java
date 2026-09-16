@@ -8,8 +8,10 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.logging.Logger;
 
 public final class Messages {
@@ -27,11 +29,20 @@ public final class Messages {
     }
 
     public void load() {
-        Path messagesPath = plugin.getDataFolder().toPath().resolve("messages.yml");
-        if (!Files.exists(messagesPath)) {
+        File file = new File(plugin.getDataFolder(), "messages.yml");
+        if (!file.exists()) {
             plugin.saveResource("messages.yml", false);
         }
-        this.configuration = YamlConfiguration.loadConfiguration(messagesPath.toFile());
+        this.configuration = YamlConfiguration.loadConfiguration(file);
+        try (InputStream stream = plugin.getResource("messages.yml")) {
+            if (stream != null) {
+                YamlConfiguration defaults = YamlConfiguration.loadConfiguration(
+                    new InputStreamReader(stream, StandardCharsets.UTF_8)
+                );
+                this.configuration.setDefaults(defaults);
+            }
+        } catch (IOException ignored) {
+        }
     }
 
     public void reload() {

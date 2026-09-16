@@ -6,13 +6,13 @@ import pluginsfix.glowpayment.command.GlowPaymentCommand;
 import pluginsfix.glowpayment.command.PayCommand;
 import pluginsfix.glowpayment.config.PaymentConfig;
 import pluginsfix.glowpayment.listener.PvPDeathListener;
+import pluginsfix.glowpayment.service.EconomyManager;
 import pluginsfix.glowpayment.service.PaymentService;
-import pluginsfix.glowpayment.service.VaultEconomyHook;
 import pluginsfix.glowpayment.text.Messages;
 
 public final class GlowPayment extends JavaPlugin {
 
-    private VaultEconomyHook economyHook;
+    private EconomyManager economyManager;
     private Messages messages;
     private PaymentService paymentService;
 
@@ -21,10 +21,10 @@ public final class GlowPayment extends JavaPlugin {
         saveDefaultConfig();
 
         this.messages = new Messages(this);
-        this.economyHook = new VaultEconomyHook(this);
+        this.economyManager = new EconomyManager(this);
 
         PaymentConfig config = PaymentConfig.fromBukkit(getConfig());
-        this.paymentService = new PaymentService(economyHook, messages, config);
+        this.paymentService = new PaymentService(economyManager, messages, config);
 
         registerCommands();
         registerListeners();
@@ -33,7 +33,7 @@ public final class GlowPayment extends JavaPlugin {
     @Override
     public void onDisable() {
         this.paymentService = null;
-        this.economyHook = null;
+        this.economyManager = null;
         this.messages = null;
     }
 
