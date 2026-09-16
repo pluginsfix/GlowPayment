@@ -88,7 +88,7 @@ public final class PaymentService {
 
         boolean deposited = economy.deposit(target, calc.netAmount());
         if (!deposited) {
-            economy.deposit(sender, calc.grossAmount());
+            economyHookDepositSender(sender, calc.grossAmount());
             messages.send(sender, "pay.invalid-amount");
             return false;
         }
@@ -103,6 +103,13 @@ public final class PaymentService {
                 Placeholder.parsed("percent", format(calc.taxPercent())),
                 Placeholder.parsed("net", format(calc.netAmount()))
             );
+            messages.send(
+                target,
+                "pay.received-with-tax",
+                Placeholder.parsed("sender", sender.getName()),
+                Placeholder.parsed("net", format(calc.netAmount())),
+                Placeholder.parsed("tax", format(calc.taxAmount()))
+            );
         } else {
             messages.send(
                 sender,
@@ -111,16 +118,19 @@ public final class PaymentService {
                 Placeholder.parsed("gross", format(calc.grossAmount())),
                 Placeholder.parsed("net", format(calc.netAmount()))
             );
+            messages.send(
+                target,
+                "pay.received",
+                Placeholder.parsed("sender", sender.getName()),
+                Placeholder.parsed("net", format(calc.netAmount()))
+            );
         }
 
-        messages.send(
-            target,
-            "pay.received",
-            Placeholder.parsed("sender", sender.getName()),
-            Placeholder.parsed("net", format(calc.netAmount()))
-        );
-
         return true;
+    }
+
+    private void economyHookDepositSender(Player sender, BigDecimal amount) {
+        economy.deposit(sender, amount);
     }
 
     public void processPvPDeath(Player victim, Player killer) {

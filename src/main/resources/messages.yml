@@ -17,9 +17,10 @@ pay:
   min-amount: "<red>Минимальная сумма перевода составляет <gold><min>$</gold>.</red>"
   max-amount: "<red>Максимальная сумма перевода составляет <gold><max>$</gold>.</red>"
   insufficient-funds: "<red>Недостаточно средств. Ваш баланс: <gold><balance>$</gold>.</red>"
-  sent-with-tax: "<green>Вы отправили <gold><gross>$</gold> игроку <gold><target></gold>. Комиссия (<yellow><percent>%</yellow>): <red><tax>$</red>. Получателю зачислено: <gold><net>$</gold>.</green>"
-  sent-no-tax: "<green>Вы отправили <gold><gross>$</gold> игроку <gold><target></gold>.</green>"
+  sent-with-tax: "<green>Вы перевели <gold><gross>$</gold> игроку <gold><target></gold>. Списана комиссия (<yellow><percent>%</yellow>): <red><tax>$</red>. Получателю зачислено: <gold><net>$</gold>.</green>"
+  sent-no-tax: "<green>Вы перевели <gold><gross>$</gold> игроку <gold><target></gold>.</green>"
   received: "<green>Вы получили <gold><net>$</gold> от игрока <gold><sender></gold>.</green>"
+  received-with-tax: "<green>Вы получили <gold><net>$</gold> от игрока <gold><sender></gold> (комиссия перевода: <red><tax>$</red>).</green>"
 
 pvp:
   victim-lost: "<red>Вы погибли в PvP с <gold><killer></gold> и потеряли <gold><lost>$</gold> (<yellow><percent>%</yellow> баланса).</red>"
