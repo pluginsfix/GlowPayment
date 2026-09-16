@@ -32,8 +32,17 @@ public final class PaymentService {
         return config;
     }
 
+    public boolean isEconomyAvailable() {
+        return economyHook.isAvailable();
+    }
+
     public boolean executeTransfer(Player sender, Player target, BigDecimal rawAmount) {
         if (sender == null || target == null) {
+            return false;
+        }
+
+        if (!economyHook.isAvailable()) {
+            messages.send(sender, "economy.not-found");
             return false;
         }
 
@@ -115,7 +124,7 @@ public final class PaymentService {
     }
 
     public void processPvPDeath(Player victim, Player killer) {
-        if (!config.pvpEnabled() || victim == null || killer == null) {
+        if (!config.pvpEnabled() || victim == null || killer == null || !economyHook.isAvailable()) {
             return;
         }
 

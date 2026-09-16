@@ -23,12 +23,6 @@ public final class GlowPayment extends JavaPlugin {
         this.messages = new Messages(this);
         this.economyHook = new VaultEconomyHook(this);
 
-        if (!economyHook.isAvailable()) {
-            getLogger().severe("Vault economy hook failed. Disabling GlowPayment.");
-            getServer().getPluginManager().disablePlugin(this);
-            return;
-        }
-
         PaymentConfig config = PaymentConfig.fromBukkit(getConfig());
         this.paymentService = new PaymentService(economyHook, messages, config);
 

@@ -5,6 +5,15 @@ api-version: '1.20'
 author: pluginsfix
 depend:
   - Vault
+softdepend:
+  - Essentials
+  - CMI
+  - PlayerPoints
+  - TheNewEconomy
+  - EcoBits
+  - CoinsEngine
+  - SunLight
+  - Treasury
 commands:
   pay:
     description: Transfer money to another player

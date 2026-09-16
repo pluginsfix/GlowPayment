@@ -1,5 +1,8 @@
 prefix: "<gradient:#FFAA00:#FF5500>[GlowPayment]</gradient> <gray>"
 
+economy:
+  not-found: "<red>Система экономики недоступна (провайдер Vault Economy не обнаружен).</red>"
+
 command:
   no-permission: "<red>У вас нет прав для выполнения этой команды.</red>"
   player-only: "<red>Эта команда доступна только игрокам.</red>"
