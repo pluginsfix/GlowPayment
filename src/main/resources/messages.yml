@@ -24,4 +24,5 @@ pay:
 pvp:
   victim-lost: "<red>Вы погибли в PvP с <gold><killer></gold> и потеряли <gold><lost>$</gold> (<yellow><percent>%</yellow> баланса).</red>"
   killer-reward: "<green>Вы одолели <gold><victim></gold> и получили <gold><reward>$</gold> (<yellow><percent>%</yellow> его баланса).</green>"
+  killer-reward-with-tax: "<green>Вы одолели <gold><victim></gold> и получили <gold><net>$</gold> (добыча: <gold><gross>$</gold>, комиссия <yellow><percent>%</yellow>: <red><tax>$</red>).</green>"
   killer-burned: "<gray>Вы одолели <gold><victim></gold>. С его счёта изъято <gold><lost>$</gold>.</gray>"

@@ -36,31 +36,62 @@ public final class PaymentCalculator {
         return new TransferCalculation(scaledGross, scaledTaxPercent, taxAmount, netAmount);
     }
 
-    public static PvPLossCalculation calculatePvPLoss(BigDecimal currentBalance, BigDecimal lossPercent) {
+    public static PvPLossCalculation calculatePvPLoss(
+        BigDecimal currentBalance,
+        BigDecimal lossPercent,
+        BigDecimal taxPercent,
+        boolean taxEnabled
+    ) {
+        BigDecimal zero = BigDecimal.ZERO.setScale(SCALE, RoundingMode.HALF_UP);
+
         if (currentBalance == null || currentBalance.compareTo(BigDecimal.ZERO) <= 0) {
-            BigDecimal zero = BigDecimal.ZERO.setScale(SCALE, RoundingMode.HALF_UP);
-            return new PvPLossCalculation(zero, zero, zero, zero);
+            return new PvPLossCalculation(zero, zero, zero, zero, zero, zero, zero);
         }
 
         BigDecimal scaledBalance = currentBalance.setScale(SCALE, RoundingMode.HALF_UP);
         if (lossPercent == null || lossPercent.compareTo(BigDecimal.ZERO) <= 0) {
-            BigDecimal zero = BigDecimal.ZERO.setScale(SCALE, RoundingMode.HALF_UP);
-            return new PvPLossCalculation(scaledBalance, zero, zero, scaledBalance);
+            return new PvPLossCalculation(scaledBalance, zero, zero, zero, zero, zero, scaledBalance);
         }
 
-        BigDecimal scaledPercent = lossPercent.setScale(SCALE, RoundingMode.HALF_UP);
-        if (scaledPercent.compareTo(HUNDRED) > 0) {
-            scaledPercent = HUNDRED;
+        BigDecimal scaledLossPercent = lossPercent.setScale(SCALE, RoundingMode.HALF_UP);
+        if (scaledLossPercent.compareTo(HUNDRED) > 0) {
+            scaledLossPercent = HUNDRED;
         }
 
-        BigDecimal lossAmount = scaledBalance.multiply(scaledPercent)
+        BigDecimal grossLossAmount = scaledBalance.multiply(scaledLossPercent)
             .divide(HUNDRED, SCALE, RoundingMode.HALF_UP);
 
-        if (lossAmount.compareTo(scaledBalance) > 0) {
-            lossAmount = scaledBalance;
+        if (grossLossAmount.compareTo(scaledBalance) > 0) {
+            grossLossAmount = scaledBalance;
         }
 
-        BigDecimal remainingBalance = scaledBalance.subtract(lossAmount);
-        return new PvPLossCalculation(scaledBalance, scaledPercent, lossAmount, remainingBalance);
+        BigDecimal scaledTaxPercent = zero;
+        BigDecimal taxAmount = zero;
+        BigDecimal netReward = grossLossAmount;
+
+        if (taxEnabled && taxPercent != null && taxPercent.compareTo(BigDecimal.ZERO) > 0) {
+            scaledTaxPercent = taxPercent.setScale(SCALE, RoundingMode.HALF_UP);
+            if (scaledTaxPercent.compareTo(HUNDRED) > 0) {
+                scaledTaxPercent = HUNDRED;
+            }
+            taxAmount = grossLossAmount.multiply(scaledTaxPercent)
+                .divide(HUNDRED, SCALE, RoundingMode.HALF_UP);
+
+            if (taxAmount.compareTo(grossLossAmount) > 0) {
+                taxAmount = grossLossAmount;
+            }
+            netReward = grossLossAmount.subtract(taxAmount);
+        }
+
+        BigDecimal remainingBalance = scaledBalance.subtract(grossLossAmount);
+        return new PvPLossCalculation(
+            scaledBalance,
+            scaledLossPercent,
+            grossLossAmount,
+            scaledTaxPercent,
+            taxAmount,
+            netReward,
+            remainingBalance
+        );
     }
 }

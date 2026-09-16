@@ -5,11 +5,15 @@ import java.math.BigDecimal;
 public record PvPLossCalculation(
     BigDecimal initialBalance,
     BigDecimal lossPercent,
-    BigDecimal lossAmount,
+    BigDecimal grossLossAmount,
+    BigDecimal taxPercent,
+    BigDecimal taxAmount,
+    BigDecimal netKillerReward,
     BigDecimal remainingBalance
 ) {
     public PvPLossCalculation {
-        if (initialBalance == null || lossPercent == null || lossAmount == null || remainingBalance == null) {
+        if (initialBalance == null || lossPercent == null || grossLossAmount == null ||
+            taxPercent == null || taxAmount == null || netKillerReward == null || remainingBalance == null) {
             throw new IllegalArgumentException("Amounts cannot be null");
         }
     }

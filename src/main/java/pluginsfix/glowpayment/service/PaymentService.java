@@ -146,31 +146,49 @@ public final class PaymentService {
             return;
         }
 
-        PvPLossCalculation loss = PaymentCalculator.calculatePvPLoss(balance, config.pvpLossPercent());
-        if (loss.lossAmount().compareTo(BigDecimal.ZERO) <= 0) {
+        PvPLossCalculation loss = PaymentCalculator.calculatePvPLoss(
+            balance,
+            config.pvpLossPercent(),
+            config.pvpTaxPercent(),
+            config.pvpTaxEnabled()
+        );
+
+        if (loss.grossLossAmount().compareTo(BigDecimal.ZERO) <= 0) {
             return;
         }
 
-        boolean withdrawn = economy.withdraw(victim, loss.lossAmount());
+        boolean withdrawn = economy.withdraw(victim, loss.grossLossAmount());
         if (!withdrawn) {
             return;
         }
 
         if (config.pvpTransferToKiller()) {
-            economy.deposit(killer, loss.lossAmount());
-            messages.send(
-                killer,
-                "pvp.killer-reward",
-                Placeholder.parsed("victim", victim.getName()),
-                Placeholder.parsed("reward", format(loss.lossAmount())),
-                Placeholder.parsed("percent", format(loss.lossPercent()))
-            );
+            economy.deposit(killer, loss.netKillerReward());
+            if (loss.taxAmount().compareTo(BigDecimal.ZERO) > 0) {
+                messages.send(
+                    killer,
+                    "pvp.killer-reward-with-tax",
+                    Placeholder.parsed("victim", victim.getName()),
+                    Placeholder.parsed("net", format(loss.netKillerReward())),
+                    Placeholder.parsed("gross", format(loss.grossLossAmount())),
+                    Placeholder.parsed("tax", format(loss.taxAmount())),
+                    Placeholder.parsed("percent", format(loss.taxPercent()))
+                );
+            } else {
+                messages.send(
+                    killer,
+                    "pvp.killer-reward",
+                    Placeholder.parsed("victim", victim.getName()),
+                    Placeholder.parsed("reward", format(loss.netKillerReward())),
+                    Placeholder.parsed("percent", format(loss.lossPercent()))
+                );
+            }
         } else {
             messages.send(
                 killer,
                 "pvp.killer-burned",
                 Placeholder.parsed("victim", victim.getName()),
-                Placeholder.parsed("lost", format(loss.lossAmount()))
+                Placeholder.parsed("lost", format(loss.grossLossAmount()))
             );
         }
 
@@ -178,7 +196,7 @@ public final class PaymentService {
             victim,
             "pvp.victim-lost",
             Placeholder.parsed("killer", killer.getName()),
-            Placeholder.parsed("lost", format(loss.lossAmount())),
+            Placeholder.parsed("lost", format(loss.grossLossAmount())),
             Placeholder.parsed("percent", format(loss.lossPercent()))
         );
     }

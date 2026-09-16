@@ -60,26 +60,50 @@ class PaymentCalculatorTest {
     }
 
     @Test
-    void calculatePvPLossNormal() {
+    void calculatePvPLossWithTax() {
         PvPLossCalculation loss = PaymentCalculator.calculatePvPLoss(
-            new BigDecimal("5000.00"),
-            new BigDecimal("10.0")
+            new BigDecimal("1000.00"),
+            new BigDecimal("10.0"),
+            new BigDecimal("15.0"),
+            true
         );
 
-        assertThat(loss.initialBalance()).isEqualByComparingTo("5000.00");
+        assertThat(loss.initialBalance()).isEqualByComparingTo("1000.00");
         assertThat(loss.lossPercent()).isEqualByComparingTo("10.00");
-        assertThat(loss.lossAmount()).isEqualByComparingTo("500.00");
-        assertThat(loss.remainingBalance()).isEqualByComparingTo("4500.00");
+        assertThat(loss.grossLossAmount()).isEqualByComparingTo("100.00");
+        assertThat(loss.taxPercent()).isEqualByComparingTo("15.00");
+        assertThat(loss.taxAmount()).isEqualByComparingTo("15.00");
+        assertThat(loss.netKillerReward()).isEqualByComparingTo("85.00");
+        assertThat(loss.remainingBalance()).isEqualByComparingTo("900.00");
+    }
+
+    @Test
+    void calculatePvPLossTaxDisabled() {
+        PvPLossCalculation loss = PaymentCalculator.calculatePvPLoss(
+            new BigDecimal("1000.00"),
+            new BigDecimal("10.0"),
+            new BigDecimal("15.0"),
+            false
+        );
+
+        assertThat(loss.grossLossAmount()).isEqualByComparingTo("100.00");
+        assertThat(loss.taxAmount()).isEqualByComparingTo("0.00");
+        assertThat(loss.netKillerReward()).isEqualByComparingTo("100.00");
+        assertThat(loss.remainingBalance()).isEqualByComparingTo("900.00");
     }
 
     @Test
     void calculatePvPLossZeroBalance() {
         PvPLossCalculation loss = PaymentCalculator.calculatePvPLoss(
             BigDecimal.ZERO,
-            new BigDecimal("10.0")
+            new BigDecimal("10.0"),
+            new BigDecimal("5.0"),
+            true
         );
 
-        assertThat(loss.lossAmount()).isEqualByComparingTo("0.00");
+        assertThat(loss.grossLossAmount()).isEqualByComparingTo("0.00");
+        assertThat(loss.taxAmount()).isEqualByComparingTo("0.00");
+        assertThat(loss.netKillerReward()).isEqualByComparingTo("0.00");
         assertThat(loss.remainingBalance()).isEqualByComparingTo("0.00");
     }
 
@@ -87,11 +111,16 @@ class PaymentCalculatorTest {
     void calculatePvPLossCappedAtHundredPercent() {
         PvPLossCalculation loss = PaymentCalculator.calculatePvPLoss(
             new BigDecimal("100.00"),
-            new BigDecimal("150.0")
+            new BigDecimal("150.0"),
+            new BigDecimal("200.0"),
+            true
         );
 
         assertThat(loss.lossPercent()).isEqualByComparingTo("100.00");
-        assertThat(loss.lossAmount()).isEqualByComparingTo("100.00");
+        assertThat(loss.grossLossAmount()).isEqualByComparingTo("100.00");
+        assertThat(loss.taxPercent()).isEqualByComparingTo("100.00");
+        assertThat(loss.taxAmount()).isEqualByComparingTo("100.00");
+        assertThat(loss.netKillerReward()).isEqualByComparingTo("0.00");
         assertThat(loss.remainingBalance()).isEqualByComparingTo("0.00");
     }
 }

@@ -14,6 +14,8 @@ public record PaymentConfig(
     BigDecimal maxAmount,
     boolean pvpEnabled,
     BigDecimal pvpLossPercent,
+    boolean pvpTaxEnabled,
+    BigDecimal pvpTaxPercent,
     boolean pvpTransferToKiller,
     BigDecimal pvpMinBalanceThreshold,
     Set<String> pvpDisabledWorlds
@@ -26,6 +28,8 @@ public record PaymentConfig(
 
         boolean pvpEnabled = config.getBoolean("pvp.enabled", true);
         BigDecimal pvpLossPercent = BigDecimal.valueOf(config.getDouble("pvp.loss-percent", 5.0));
+        boolean pvpTaxEnabled = config.getBoolean("pvp.tax-enabled", true);
+        BigDecimal pvpTaxPercent = BigDecimal.valueOf(config.getDouble("pvp.tax-percent", 10.0));
         boolean pvpTransferToKiller = config.getBoolean("pvp.transfer-to-killer", true);
         BigDecimal pvpMinBalanceThreshold = BigDecimal.valueOf(config.getDouble("pvp.min-balance-threshold", 1.0));
 
@@ -39,6 +43,8 @@ public record PaymentConfig(
             maxAmount,
             pvpEnabled,
             pvpLossPercent,
+            pvpTaxEnabled,
+            pvpTaxPercent,
             pvpTransferToKiller,
             pvpMinBalanceThreshold,
             Set.copyOf(pvpDisabledWorlds)

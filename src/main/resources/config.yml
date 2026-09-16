@@ -1,4 +1,4 @@
-config-version: 1
+config-version: 2
 
 transfer:
   tax-enabled: true
@@ -9,6 +9,8 @@ transfer:
 pvp:
   enabled: true
   loss-percent: 5.0
+  tax-enabled: true
+  tax-percent: 10.0
   transfer-to-killer: true
   min-balance-threshold: 1.0
   disabled-worlds:
